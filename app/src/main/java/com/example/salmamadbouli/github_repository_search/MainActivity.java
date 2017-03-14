@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public Loader<String> onCreateLoader(int id, final Bundle args) {
         return new AsyncTaskLoader<String>(this) {
+            String mGithubJson;
             @Override
             protected void onStartLoading() {
                 if (args == null) {
@@ -83,7 +84,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 }
 
                 mLoadingIndicator.setVisibility(View.VISIBLE);
-                forceLoad();
+                if (mGithubJson != null) {
+                    deliverResult(mGithubJson);
+                } else {
+                    forceLoad();
+                }
             }
             @Override
             public String loadInBackground() {
@@ -105,6 +110,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     e.printStackTrace();
                     return null;
                 }
+            }
+            @Override
+            public void deliverResult(String githubJson) {
+                mGithubJson = githubJson;
+                super.deliverResult(githubJson);
             }
         };
     }
